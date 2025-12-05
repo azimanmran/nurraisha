@@ -1,360 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nur Raisha's Amazing World 🌸</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nur Raisha's Amazing World 🌸</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background: #ffdbe9;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: #ffdbe9; /* smoother static background */
-            min-height: 100vh;
-            overflow-x: hidden;
+    /* Scroll animation */
+    .section, header {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+        transition: all 0.8s ease-out;
+    }
+    .section.visible, header.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    header {
+        text-align: center;
+        background: white;
+        padding: 40px;
+        border-radius: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+    h1 { color: #ff6b9d; font-size: 3em; margin-bottom: 10px; transition: transform 0.3s; }
+    h1:hover { transform: scale(1.05); }
+    .subtitle { color: #ff8fab; font-size: 1.5em; }
+
+    .profile-photo {
+        width: 150px; height: 150px; border-radius: 50%; border: 5px solid #ff6b9d;
+        margin: 0 auto 20px; display: block; object-fit: cover;
+        box-shadow: 0 8px 20px rgba(255,107,157,0.3);
+    }
+
+    .section {
+        background: white;
+        padding: 30px;
+        border-radius: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        color: #ff6b9d;
+        font-size: 2em;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #ffb3d9;
+        padding-bottom: 10px;
+        transition: transform 0.3s;
+    }
+    h2:hover { transform: scale(1.05); }
+
+    .about-content { display: flex; flex-direction: column; gap: 25px; }
+
+    .about-item {
+        display: flex; align-items: center; gap: 20px;
+        padding: 20px; background: #ffe7f0;
+        border-radius: 20px; border-left: 6px solid #ff6b9d;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .about-item:hover { transform: translateY(-5px); box-shadow: 0 6px 20px rgba(255,107,157,0.2); }
+
+    .about-item:nth-child(even) {
+        flex-direction: row-reverse;
+        border-left: none; border-right: 6px solid #ffb3d9;
+    }
+
+    .about-emoji { font-size: 4em; min-width: 80px; text-align: center; }
+
+    .about-text h3 { color: #ff6b9d; margin-bottom: 5px; font-weight: bold; }
+    .about-text p { color: #555; font-size: 1.1em; }
+
+    .story {
+        font-size: 1.2em; line-height: 1.7; color: #333;
+        padding: 20px;
+        background: #ffe6ef;
+        border-radius: 15px;
+        border-left: 5px solid #ff6b9d;
+        transition: transform 0.3s;
+    }
+    .story:hover { transform: scale(1.02); }
+
+    /* GAME BUTTONS */
+    .game-btn, .restart-btn, .start-btn {
+        background: #ff9ab5;
+        color: white; border: none;
+        padding: 12px 35px; font-size: 1.2em;
+        border-radius: 50px; cursor: pointer;
+        margin: 10px;
+        transition: 0.3s;
+    }
+    .game-btn:hover, .restart-btn:hover, .start-btn:hover {
+        transform: scale(1.05);
+    }
+
+    .game-buttons { display:flex; justify-content:center; align-items:center; gap:15px; margin-bottom:20px; flex-wrap:wrap; }
+
+    /* TIC TAC TOE */
+    #tictactoe { display: block; max-width: 400px; margin: 20px auto; text-align:center; }
+    .board { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .cell {
+        aspect-ratio: 1;
+        background: white;
+        border: 3px solid #ff6b9d;
+        font-size: 3em;
+        cursor: pointer;
+        border-radius: 15px;
+        display: flex; justify-content: center; align-items: center;
+        transition: background 0.3s;
+    }
+    .cell:hover { background: #ffe7f0; }
+
+    /* DINO GAME */
+    #dino-game-wrapper { display: none; max-width: 800px; margin: 20px auto; flex-direction: column; gap: 12px; }
+    #dino-game {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        background: #ffeef5;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 3px solid #ff6b9d;
+    }
+    #dino-controls { text-align: center; display: none; }
+    .score {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.5em;
+        color: #ff6b9d;
+        font-weight: bold;
+    }
+    .dino { position: absolute; bottom: 0; left: 50px; width: 40px; height: 40px; background: #ff6b9d; border-radius: 5px; }
+    .obstacle { position: absolute; bottom: 0; right: 0; width: 20px; height: 40px; background: #ffb3d9; border-radius: 5px; }
+
+    /* POPUP */
+    .popup-overlay {
+        display: none; position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.7);
+        justify-content: center; align-items: center;
+        z-index: 1000;
+    }
+    .popup-content {
+        background: white; padding: 40px;
+        border-radius: 30px; text-align: center;
+        max-width: 400px;
+    }
+    .dragon { font-size: 5em; margin-bottom: 20px; }
+
+    @media(max-width:768px){
+        .about-item{flex-direction:column !important; text-align:center;
+            border-left:none !important; border-right:none !important;
+            border-top:6px solid #ff6b9d;
         }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-
-        header {
-            text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
-
-        h1 { color: #ff6b9d; font-size: 3em; margin-bottom: 10px; }
-        .subtitle { color: #ff8fab; font-size: 1.5em; }
-
-        .profile-photo {
-            width: 150px; height: 150px; border-radius: 50%; border: 5px solid #ff6b9d;
-            margin: 0 auto 20px; display: block; object-fit: cover;
-            box-shadow: 0 8px 20px rgba(255,107,157,0.3);
-        }
-
-        .section {
-            background: white;
-            padding: 30px;
-            border-radius: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            color: #ff6b9d;
-            font-size: 2em;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #ffb3d9;
-            padding-bottom: 10px;
-        }
-
-        .about-content { display: flex; flex-direction: column; gap: 25px; }
-
-        .about-item {
-            display: flex; align-items: center; gap: 20px;
-            padding: 20px; background: #ffe7f0;
-            border-radius: 20px; border-left: 6px solid #ff6b9d;
-        }
-
-        .about-item:nth-child(even) {
-            flex-direction: row-reverse;
-            border-left: none; border-right: 6px solid #ffb3d9;
-        }
-
-        .about-emoji { font-size: 4em; min-width: 80px; text-align: center; }
-
-        .about-text h3 { color: #ff6b9d; margin-bottom: 5px; font-weight: bold; }
-        .about-text p { color: #555; font-size: 1.1em; }
-
-        .story {
-            font-size: 1.2em; line-height: 1.7; color: #333;
-            padding: 20px;
-            background: #ffe6ef;
-            border-radius: 15px;
-            border-left: 5px solid #ff6b9d;
-        }
-
-        /* GAME BUTTONS */
-        .game-btn, .restart-btn, .start-btn {
-            background: #ff9ab5;
-            color: white; border: none;
-            padding: 12px 35px; font-size: 1.2em;
-            border-radius: 50px; cursor: pointer;
-            margin: 10px;
-            transition: 0.3s;
-        }
-        .game-btn:hover, .restart-btn:hover, .start-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* center game buttons */
-        .game-buttons { display:flex; justify-content:center; align-items:center; gap:15px; margin-bottom:20px; }
-
-        /* TIC TAC TOE */
-        #tictactoe { display: block; max-width: 400px; margin: 20px auto; }
-        .board { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-        .cell {
-            aspect-ratio: 1;
-            background: white;
-            border: 3px solid #ff6b9d;
-            font-size: 3em;
-            cursor: pointer;
-            border-radius: 15px;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        /* DINO GAME */
-        #dino-game {
-            display: none;
-            position: relative;
-            width: 100%; max-width: 800px;
-            height: 200px;
-            margin: 20px auto;
-            background: #ffeef5;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 3px solid #ff6b9d;
-        }
-        .dino {
-            position: absolute; bottom: 0; left: 50px;
-            width: 40px; height: 40px;
-            background: #ff6b9d; border-radius: 5px;
-        }
-        .obstacle {
-            position: absolute; bottom: 0; right: 0;
-            width: 20px; height: 40px;
-            background: #ffb3d9; border-radius: 5px;
-        }
-        .score {
-            position: absolute; top: 10px; right: 10px;
-            font-size: 1.5em; color: #ff6b9d; font-weight: bold;
-        }
-
-        /* POPUP */
-        .popup-overlay {
-            display: none; position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            justify-content: center; align-items: center;
-            z-index: 1000;
-        }
-        .popup-content {
-            background: white; padding: 40px;
-            border-radius: 30px; text-align: center;
-            max-width: 400px;
-        }
-        .dragon { font-size: 5em; margin-bottom: 20px; }
-
-        @media(max-width:768px){
-            .about-item{flex-direction:column !important; text-align:center;
-                border-left:none !important; border-right:none !important;
-                border-top:6px solid #ff6b9d;
-            }
-        }
-    </style>
+        h1 { font-size: 2.2em; }
+        h2 { font-size: 1.7em; }
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <img src="raisha.jpg" class="profile-photo" alt="Nur Raisha">
-            <h1>🌟 Nur Raisha's Amazing World 🌟</h1>
-            <p class="subtitle">Welcome to my colorful life!</p>
-        </header>
 
-        <div class="section">
-            <h2>📖 About Me</h2>
-            <div class="about-content">
-                <div class="about-item"><span class="about-emoji">👧</span><div class="about-text"><h3>My Name Is</h3><p>Nur Raisha bt Mohamad Aziman</p></div></div>
-                <div class="about-item"><span class="about-emoji">🎂</span><div class="about-text"><h3>I Am</h3><p>9 Years Old</p></div></div>
-                <div class="about-item"><span class="about-emoji">🏫</span><div class="about-text"><h3>I Study At</h3><p>Sekolah Kebangsaan Puchong Indah</p></div></div>
-                <div class="about-item"><span class="about-emoji">❤️</span><div class="about-text"><h3>I Love</h3><p>Eating yummy food 🍕🍰 and Drawing beautiful pictures 🎨✨</p></div></div>
-            </div>
+<div class="container">
+    <header>
+        <img src="raisha.jpg" class="profile-photo" alt="Nur Raisha">
+        <h1>🌟 Nur Raisha's Amazing World 🌟</h1>
+        <p class="subtitle">Welcome to my colorful life!</p>
+    </header>
+
+    <div class="section">
+        <h2>📖 About Me</h2>
+        <div class="about-content">
+            <div class="about-item"><span class="about-emoji">👧</span><div class="about-text"><h3>My Name Is</h3><p>Nur Raisha bt Mohamad Aziman</p></div></div>
+            <div class="about-item"><span class="about-emoji">🎂</span><div class="about-text"><h3>I Am</h3><p>9 Years Old</p></div></div>
+            <div class="about-item"><span class="about-emoji">🏫</span><div class="about-text"><h3>I Study At</h3><p>Sekolah Kebangsaan Puchong Indah</p></div></div>
+            <div class="about-item"><span class="about-emoji">❤️</span><div class="about-text"><h3>I Love</h3><p>Eating yummy food 🍕🍰 and Drawing beautiful pictures 🎨✨</p></div></div>
         </div>
+    </div>
 
-        <div class="section">
-            <h2>✨ My Story</h2>
-            <div class="story">
-                <p>Hi! I'm Nur Raisha, and I'm 9 years old! 🌈 I love going to Sekolah Kebangsaan Puchong Indah.</p>
-                <p>I love eating delicious food and drawing colorful pictures!</p>
-                <p>I'm a cheerful girl who loves to explore, learn, and have fun! 🌟💫</p>
-            </div>
+    <div class="section">
+        <h2>✨ My Story</h2>
+        <div class="story">
+            <p>Hi! I'm Nur Raisha, and I'm 9 years old! 🌈 I love going to Sekolah Kebangsaan Puchong Indah where I learn new things every day with my friends.</p>
+            <p>My two favorite things in the whole world are eating delicious food 🍕🍰 and drawing beautiful pictures! 🎨 When I eat yummy food, it makes me so happy, and when I draw, I can create anything I imagine - colorful flowers, cute animals, and magical worlds!</p>
+            <p>I'm a creative and cheerful girl who loves to explore, learn, and have fun! Every day is a new adventure, and I'm excited to see what amazing things I'll discover next! 🌟💫</p>
+            <p>My dreams are as colorful as my drawings, and I believe that with hard work and a happy heart, I can achieve anything! 🚀✨</p>
         </div>
+    </div>
 
-        <div class="section">
-            <h2>🎮 Fun Games</h2>
-            <div class="game-container">
-                <!-- centered buttons -->
-                <div class="game-buttons">
-                    <button class="game-btn" onclick="showGame('tic')">Tic Tac Toe 🎯</button>
-                    <button class="game-btn" onclick="showGame('dino')">Dino Run 🦕</button>
-                </div>
+    <div class="section">
+        <h2>🎮 Fun Games</h2>
+        <div class="game-container">
+            <div class="game-buttons">
+                <button class="game-btn" onclick="showGame('tic')">Tic Tac Toe 🎯</button>
+                <button class="game-btn" onclick="showGame('dino')">Dino Run 🦕</button>
+            </div>
 
-                <!-- Tic Tac Toe (default visible) -->
-                <div id="tictactoe" style="text-align:center;">
-                    <h3>Tic Tac Toe</h3>
-                    <p id="turn">Player X's Turn</p><br>
-                    <div class="board" id="board"></div>
-                    <div style="text-align:center;"><button class="restart-btn" onclick="resetTicTacToe()">Reset Game</button></div>
-                </div>
+            <div id="tictactoe">
+                <h3>Tic Tac Toe</h3>
+                <p id="turn">Player X's Turn</p><br>
+                <div class="board" id="board"></div>
+                <div style="text-align:center;"><button class="restart-btn" onclick="resetTicTacToe()">Reset Game</button></div>
+            </div>
 
-                <!-- Dino Game -->
+            <div id="dino-game-wrapper">
                 <div id="dino-game">
                     <div class="score" id="score">Score: 0</div>
                     <div class="dino" id="dino"></div>
-                    <div style="text-align:center; margin-top:12px;">
-                        <button class="start-btn" onclick="startDinoGame()">Start Game</button>
-                        <button class="restart-btn" onclick="stopDinoGame()">Stop Game</button>
-                    </div>
+                    <div class="obstacle"></div>
+                </div>
+                
+                <div id="dino-controls">
+                    <button class="start-btn" onclick="startDinoGame()">Start Game</button>
+                    <button class="restart-btn" onclick="stopDinoGame()">Stop Game</button>
                 </div>
             </div>
+
         </div>
     </div>
+</div>
 
-    <div class="popup-overlay" id="popup">
-        <div class="popup-content">
-            <div class="dragon">🐉🔥</div>
-            <h2 id="popup-title"></h2>
-            <p id="popup-message"></p>
-            <button class="restart-btn" onclick="closePopup()">Close</button>
-        </div>
+<div class="popup-overlay" id="popup">
+    <div class="popup-content">
+        <div class="dragon">🐉🔥</div>
+        <h2 id="popup-title"></h2>
+        <p id="popup-message"></p>
+        <button class="restart-btn" onclick="closePopup()">Close</button>
     </div>
+</div>
 
-    <script>
-        /* POPUP */
-        function showPopup(title, msg){
-            document.getElementById('popup-title').textContent = title;
-            document.getElementById('popup-message').textContent = msg;
-            document.getElementById('popup').style.display = 'flex';
-        }
-        function closePopup(){ document.getElementById('popup').style.display='none'; }
-
-        /* TIC TAC TOE */
-        let boardArray = ['', '', '', '', '', '', '', '', ''];
-        let currentPlayer = 'X';
-        let gameActive = true;
-
-        function initTicTacToe(){
-            const board = document.getElementById('board');
-            board.innerHTML = '';
-            boardArray.forEach((_, i) => {
-                const c = document.createElement('div');
-                c.className = 'cell';
-                c.onclick = () => handleCell(i);
-                board.appendChild(c);
-            });
-        }
-
-        function handleCell(i){
-            if(boardArray[i] !== '' || !gameActive) return;
-            boardArray[i] = currentPlayer;
-            document.querySelectorAll('.cell')[i].textContent = currentPlayer;
-
-            if(checkWin()){
-                gameActive = false;
-                showPopup('🎉 You Win!', `Player ${currentPlayer} wins!`);
-            } else if(!boardArray.includes('')){
-                gameActive = false;
-                showPopup('🤝 Draw!', `It's a draw!`);
-            } else {
-                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                document.getElementById('turn').textContent = `Player ${currentPlayer}'s Turn`;
+<script>
+    // Scroll animation
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting){
+                entry.target.classList.add('visible');
             }
+        });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.section, header').forEach(el => observer.observe(el));
+
+    // Popup
+    function showPopup(title, msg){
+        document.getElementById('popup-title').textContent = title;
+        document.getElementById('popup-message').textContent = msg;
+        document.getElementById('popup').style.display = 'flex';
+    }
+    function closePopup(){ document.getElementById('popup').style.display='none'; }
+
+    // TIC TAC TOE
+    let boardArray = ['', '', '', '', '', '', '', '', ''];
+    let currentPlayer = 'X';
+    let gameActive = true;
+
+    function initTicTacToe(){
+        const board = document.getElementById('board');
+        board.innerHTML = '';
+        boardArray.forEach((_, i) => {
+            const c = document.createElement('div');
+            c.className = 'cell';
+            c.onclick = () => handleCell(i);
+            board.appendChild(c);
+        });
+    }
+
+    function handleCell(i){
+        if(boardArray[i] !== '' || !gameActive) return;
+        boardArray[i] = currentPlayer;
+        document.querySelectorAll('.cell')[i].textContent = currentPlayer;
+
+        if(checkWin()){
+            gameActive = false;
+            showPopup('🎉 You Win!', `Player ${currentPlayer} wins!`);
+        } else if(!boardArray.includes('')){
+            gameActive = false;
+            showPopup('🤝 Draw!', `It's a draw!`);
+        } else {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            document.getElementById('turn').textContent = `Player ${currentPlayer}'s Turn`;
         }
+    }
 
-        function checkWin(){
-            const p = [ [0,1,2],[3,4,5],[6,7,8], [0,3,6],[1,4,7],[2,5,8], [0,4,8],[2,4,6] ];
-            return p.some(a => boardArray[a[0]] && boardArray[a[0]]===boardArray[a[1]] && boardArray[a[1]]===boardArray[a[2]]);
+    function checkWin(){
+        const p = [ [0,1,2],[3,4,5],[6,7,8], [0,3,6],[1,4,7],[2,5,8], [0,4,8],[2,4,6] ];
+        return p.some(a => boardArray[a[0]] && boardArray[a[0]]===boardArray[a[1]] && boardArray[a[1]]===boardArray[a[2]]);
+    }
+
+    function resetTicTacToe(){
+        boardArray = ['', '', '', '', '', '', '', '', ''];
+        currentPlayer = 'X'; gameActive = true;
+        document.getElementById('turn').textContent = "Player X's Turn";
+        initTicTacToe();
+    }
+
+    function showGame(name){
+        const tic = document.getElementById('tictactoe');
+        const dinoWrapper = document.getElementById('dino-game-wrapper');
+        const dinoControls = document.getElementById('dino-controls');
+
+        tic.style.display = 'none';
+        dinoWrapper.style.display = 'none';
+        dinoControls.style.display = 'none';
+
+        if(name==='tic'){
+            tic.style.display='block';
+        } else if(name==='dino'){
+            dinoWrapper.style.display='flex';
+            dinoControls.style.display='block';
         }
+    }
 
-        function resetTicTacToe(){
-            boardArray = ['', '', '', '', '', '', '', '', ''];
-            currentPlayer = 'X'; gameActive = true;
-            document.getElementById('turn').textContent = "Player X's Turn";
-            initTicTacToe();
-        }
+    // DINO GAME
+    let dinoInterval = null, score = 0, jumping=false, running=false;
 
-        function showGame(name){
-            // hide both first
-            const tic = document.getElementById('tictactoe');
-            const dino = document.getElementById('dino-game');
-            tic.style.display = 'none';
-            dino.style.display = 'none';
+    function startDinoGame(){
+        if(running) return;
+        running = true; score=0;
+        document.getElementById('score').textContent='Score: 0';
+        const dino = document.getElementById('dino');
+        const game = document.getElementById('dino-game');
+        let obstacle = game.querySelector('.obstacle');
+        let pos = game.offsetWidth;
 
-            if(name === 'tic'){
-                tic.style.display = 'block';
-            } else if(name === 'dino'){
-                dino.style.display = 'block';
+        dinoInterval = setInterval(()=>{
+            pos -= 5;
+            obstacle.style.right = (game.offsetWidth - pos) + 'px';
+            if(pos < -20){ pos = game.offsetWidth; score++; document.getElementById('score').textContent='Score: '+score; }
+            const dR = dino.getBoundingClientRect();
+            const oR = obstacle.getBoundingClientRect();
+            if(dR.right > oR.left && dR.left < oR.right && dR.bottom > oR.top){
+                stopDinoGame();
+                showPopup('🦕 Game Over!','Score: '+score);
             }
-        }
+        }, 20);
 
-        /* DINO GAME */
-        let dinoInterval = null, score = 0, jumping=false, running=false;
+        game.onclick = jump;
+    }
 
-        function startDinoGame(){
-            if(running) return;
-            running = true;
-            score = 0;
-            document.getElementById('score').textContent = 'Score: 0';
+    function stopDinoGame(){
+        running = false;
+        clearInterval(dinoInterval);
+    }
 
-            const dino = document.getElementById('dino');
-            const game = document.getElementById('dino-game');
+    function jump(){
+        if(jumping || !running) return;
+        jumping = true;
+        const d=document.getElementById('dino'); let h=0;
+        let up=setInterval(()=>{
+            if(h>=100){ clearInterval(up); let down=setInterval(()=>{ if(h<=0){ clearInterval(down); jumping=false; } h-=5; d.style.bottom=h+'px'; },20); }
+            h+=5; d.style.bottom=h+'px';
+        },20);
+    }
 
-            let obstacle = game.querySelector('.obstacle');
-            if(!obstacle){
-                obstacle = document.createElement('div');
-                obstacle.className = 'obstacle';
-                game.appendChild(obstacle);
-            }
-
-            let pos = game.offsetWidth;
-
-            dinoInterval = setInterval(() => {
-                pos -= 5;
-                obstacle.style.right = (game.offsetWidth - pos) + 'px';
-
-                if(pos < -20){ pos = game.offsetWidth; score++; document.getElementById('score').textContent = 'Score: '+score; }
-
-                const dR = dino.getBoundingClientRect();
-                const oR = obstacle.getBoundingClientRect();
-
-                if(dR.right > oR.left && dR.left < oR.right && dR.bottom > oR.top){
-                    stopDinoGame();
-                    showPopup('🦕 Game Over!','Score: '+score);
-                }
-            }, 20);
-
-            game.onclick = jump;
-        }
-
-        function stopDinoGame(){
-            running = false;
-            clearInterval(dinoInterval);
-        }
-
-        function jump(e){
-            if(jumping || !running) return;
-            jumping = true;
-            const d=document.getElementById('dino');
-            let h=0;
-            let up=setInterval(()=>{
-                if(h>=100){
-                    clearInterval(up);
-                    let down=setInterval(()=>{
-                        if(h<=0){ clearInterval(down); jumping=false; }
-                        h-=5; d.style.bottom=h+'px';
-                    },20);
-                }
-                h+=5; d.style.bottom=h+'px';
-            },20);
-        }
-
-        /* DEFAULT: SHOW TIC TAC TOE */
-        window.onload = () => {
-            initTicTacToe();
-            showGame('tic');
-        }
-    </script>
+    window.onload = ()=>{
+        initTicTacToe();
+        showGame('tic'); // default game
+    }
+</script>
 </body>
 </html>
