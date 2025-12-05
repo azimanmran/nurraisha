@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nur Raisha Amazing World 🌸</title>
+    <title>Nur Raisha's Amazing World 🌸</title>
     <style>
         * {
             margin: 0;
@@ -282,6 +282,7 @@
             border-radius: 15px;
             overflow: hidden;
             border: 3px solid #ff6b9d;
+            cursor: pointer;
         }
 
         .dino {
@@ -311,6 +312,88 @@
             font-size: 1.5em;
             color: #ff6b9d;
             font-weight: bold;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .dragon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: dragonFire 1s infinite;
+        }
+
+        @keyframes dragonFire {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .popup-content h2 {
+            color: #ff6b9d;
+            margin-bottom: 10px;
+            border: none;
+        }
+
+        .popup-content p {
+            font-size: 1.2em;
+            margin: 15px 0;
+            color: #555;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.3);
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -404,6 +487,15 @@
         </div>
     </div>
 
+    <div class="popup-overlay" id="popup">
+        <div class="popup-content">
+            <div class="dragon">🐉🔥</div>
+            <h2 id="popup-title">Congratulations!</h2>
+            <p id="popup-message">You're amazing!</p>
+            <button class="restart-btn" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
     <script>
         // Animated flowers
         function createFlower() {
@@ -427,6 +519,16 @@
         let currentPlayer = 'X';
         let gameActive = true;
 
+        function showPopup(title, message) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-message').textContent = message;
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
         function initTicTacToe() {
             const boardElement = document.getElementById('board');
             boardElement.innerHTML = '';
@@ -447,6 +549,7 @@
                 if (checkWinner()) {
                     document.getElementById('turn').textContent = `Player ${currentPlayer} Wins! 🎉`;
                     gameActive = false;
+                    showPopup('🎉 You Win! 🎉', `Player ${currentPlayer} is the champion!`);
                 } else if (!board.includes('')) {
                     document.getElementById('turn').textContent = "It's a Draw! 🤝";
                     gameActive = false;
@@ -482,6 +585,7 @@
         let dinoGame = null;
         let score = 0;
         let isJumping = false;
+        let gameRunning = false;
 
         function toggleGame(game) {
             const ttt = document.getElementById('tictactoe');
@@ -494,8 +598,7 @@
                 if (dinoGame) {
                     clearInterval(dinoGame);
                     document.removeEventListener('keydown', jump);
-                    document.removeEventListener('touchstart', jump);
-                    dino.removeEventListener('click', jump);
+                    gameRunning = false;
                 }
             } else {
                 dino.style.display = dino.style.display === 'none' ? 'block' : 'none';
@@ -504,17 +607,19 @@
                 else if (dinoGame) {
                     clearInterval(dinoGame);
                     document.removeEventListener('keydown', jump);
-                    document.removeEventListener('touchstart', jump);
-                    dino.removeEventListener('click', jump);
+                    gameRunning = false;
                 }
             }
         }
 
         function startDinoGame() {
+            if (gameRunning) return;
+            gameRunning = true;
             score = 0;
             document.getElementById('score').textContent = 'Score: 0';
             const dino = document.getElementById('dino');
             const game = document.getElementById('dino-game');
+            dino.style.bottom = '0px';
             
             let obstacle = document.querySelector('.obstacle');
             if (!obstacle) {
@@ -525,11 +630,26 @@
             
             let obstacleX = game.offsetWidth;
             
-            document.addEventListener('keydown', jump);
-            document.addEventListener('touchstart', jump);
-            game.addEventListener('click', jump);
+            const keyHandler = (e) => {
+                if (e.code === 'Space') jump(e);
+            };
+            
+            document.addEventListener('keydown', keyHandler);
+            
+            const clickHandler = (e) => {
+                if (gameRunning) jump(e);
+            };
+            
+            game.addEventListener('click', clickHandler);
             
             dinoGame = setInterval(() => {
+                if (!gameRunning) {
+                    clearInterval(dinoGame);
+                    document.removeEventListener('keydown', keyHandler);
+                    game.removeEventListener('click', clickHandler);
+                    return;
+                }
+                
                 obstacleX -= 5;
                 obstacle.style.right = (game.offsetWidth - obstacleX) + 'px';
                 
@@ -546,10 +666,10 @@
                     dinoRect.left < obstacleRect.right &&
                     dinoRect.bottom > obstacleRect.top) {
                     clearInterval(dinoGame);
-                    document.removeEventListener('keydown', jump);
-                    document.removeEventListener('touchstart', jump);
-                    game.removeEventListener('click', jump);
-                    alert('Game Over! Your score: ' + score + ' 🦕');
+                    document.removeEventListener('keydown', keyHandler);
+                    game.removeEventListener('click', clickHandler);
+                    gameRunning = false;
+                    showPopup('🦕 Game Over! 🦕', `Your score: ${score}. Try again!`);
                     obstacleX = game.offsetWidth;
                 }
             }, 20);
@@ -557,7 +677,8 @@
 
         function jump(e) {
             if (e.type === 'keydown' && e.code !== 'Space') return;
-            if (isJumping) return;
+            e.preventDefault();
+            if (isJumping || !gameRunning) return;
             
             const dino = document.getElementById('dino');
             isJumping = true;
@@ -582,5 +703,3 @@
     </script>
 </body>
 </html>
-
-
