@@ -491,12 +491,22 @@
                 ttt.style.display = ttt.style.display === 'none' ? 'block' : 'none';
                 dino.style.display = 'none';
                 if (ttt.style.display === 'block') initTicTacToe();
-                if (dinoGame) clearInterval(dinoGame);
+                if (dinoGame) {
+                    clearInterval(dinoGame);
+                    document.removeEventListener('keydown', jump);
+                    document.removeEventListener('touchstart', jump);
+                    dino.removeEventListener('click', jump);
+                }
             } else {
                 dino.style.display = dino.style.display === 'none' ? 'block' : 'none';
                 ttt.style.display = 'none';
                 if (dino.style.display === 'block') startDinoGame();
-                else if (dinoGame) clearInterval(dinoGame);
+                else if (dinoGame) {
+                    clearInterval(dinoGame);
+                    document.removeEventListener('keydown', jump);
+                    document.removeEventListener('touchstart', jump);
+                    dino.removeEventListener('click', jump);
+                }
             }
         }
 
@@ -517,6 +527,7 @@
             
             document.addEventListener('keydown', jump);
             document.addEventListener('touchstart', jump);
+            game.addEventListener('click', jump);
             
             dinoGame = setInterval(() => {
                 obstacleX -= 5;
@@ -535,6 +546,9 @@
                     dinoRect.left < obstacleRect.right &&
                     dinoRect.bottom > obstacleRect.top) {
                     clearInterval(dinoGame);
+                    document.removeEventListener('keydown', jump);
+                    document.removeEventListener('touchstart', jump);
+                    game.removeEventListener('click', jump);
                     alert('Game Over! Your score: ' + score + ' 🦕');
                     obstacleX = game.offsetWidth;
                 }
